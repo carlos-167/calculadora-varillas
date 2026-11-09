@@ -1,0 +1,92 @@
+/* =============================================================
+   Calculadora de Varillas — css/barra-titulo.css
+   -------------------------------------------------------------
+   Barra de título propia para la superposición de controles de
+   ventana (Window Controls Overlay). Solo aparece cuando la app
+   instalada usa ese modo de pantalla.
+
+   · env(titlebar-area-*) indica dónde está libre el área de la barra
+     de título (en Windows los botones del sistema quedan a la derecha,
+     en macOS a la izquierda). El segundo valor es el respaldo.
+   · app-region: drag  → la barra es un controlador de arrastre.
+   · app-region: no-drag → los 5 botones siguen recibiendo clics.
+   ============================================================= */
+
+.titlebar { display: none; }
+
+@media (display-mode: window-controls-overlay) {
+  :root { --titlebar-h: env(titlebar-area-height, 40px); }
+
+  .titlebar {
+    position: fixed;
+    left: env(titlebar-area-x, 0);
+    top: env(titlebar-area-y, 0);
+    width: env(titlebar-area-width, 100%);
+    height: var(--titlebar-h);
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px 0 12px;
+    background: rgba(15, 17, 22, .82);
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    -webkit-app-region: drag;
+    app-region: drag;
+    user-select: none;
+  }
+
+  /* El contenido empieza debajo de la barra */
+  body { padding-top: var(--titlebar-h); }
+  .results, .history { scroll-margin-top: calc(var(--titlebar-h) + 16px); }
+}
+
+.titlebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.titlebar__name { overflow: hidden; text-overflow: ellipsis; }
+.titlebar__brand img { width: 18px; height: 18px; border-radius: 5px; flex: none; }
+
+.titlebar__controls {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.tb-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 12.5px;
+  font-weight: 600;
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+  transition: background-color .15s, color .15s, border-color .15s;
+}
+.tb-btn svg { flex: none; }
+.tb-btn:hover { background: rgba(255, 255, 255, .08); color: var(--text); }
+.tb-btn:active { background: rgba(255, 255, 255, .14); }
+.tb-btn--primary { color: var(--cyan); border-color: rgba(75, 232, 255, .35); }
+.tb-btn--primary:hover { color: var(--cyan); background: rgba(75, 232, 255, .12); }
+.tb-btn:focus-visible { outline-offset: 1px; }
+
+/* Ventana angosta: solo íconos (la clase la pone js/barra-titulo.js) */
+.titlebar--compacta .tb-btn { padding: 0 7px; }
+.titlebar--compacta .tb-btn__label,
+.titlebar--compacta .titlebar__name { display: none; }

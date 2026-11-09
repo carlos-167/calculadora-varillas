@@ -1,0 +1,74 @@
+/* =============================================================
+   Calculadora de Varillas — css/historial.css
+   -------------------------------------------------------------
+   Lista de cálculos recientes.
+   ============================================================= */
+
+/* ---------- Historial ---------- */
+.history {
+  margin-top: 40px;
+  padding: 24px 22px;
+  border-radius: 34px;
+  background: linear-gradient(170deg, rgba(200, 210, 226, .1), rgba(30, 34, 42, .45));
+  border: 1px solid rgba(255, 255, 255, .1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-dark);
+}
+.history__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.history__head h2 { font-size: 24px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 4px; }
+.history__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+.history__empty { color: var(--text-3); font-size: 14px; padding: 6px 2px; }
+
+.hist-item { position: relative; }
+.hist-item__load {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  padding: 14px 48px 14px 16px;
+  border-radius: 22px;
+  border: 1px solid var(--pill-border);
+  background: var(--pill-bg);
+  text-align: left;
+  color: var(--text);
+  transition: transform .2s var(--ease-out), border-color .2s, box-shadow .2s;
+  box-shadow: var(--shadow-dark);
+}
+.hist-item__load:hover { transform: translateY(-3px); border-color: rgba(75, 232, 255, .4); box-shadow: 0 30px 40px -24px rgba(0, 0, 0, .95), 0 0 0 1px rgba(75, 232, 255, .15); }
+.hist-item__top { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-3); }
+.hist-item__mode {
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--cyan);
+  background: rgba(75, 232, 255, .1);
+}
+.hist-item__mode.is-manual { color: #9dbbff; background: rgba(93, 141, 255, .14); }
+.hist-item__title { font-size: 16px; font-weight: 650; }
+.hist-item__res { font-size: 13.5px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.hist-item__res b { color: var(--text); font-weight: 600; }
+.hist-item__state { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); margin-right: 6px; vertical-align: middle; box-shadow: 0 0 6px var(--ok); }
+.hist-item__state.is-warn { background: var(--warn); box-shadow: 0 0 6px var(--warn); }
+.hist-item__del {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .06);
+  color: var(--text-3);
+  transition: background .2s, color .2s;
+}
+.hist-item__del:hover { background: rgba(255, 111, 111, .2); color: #ffb3b3; }

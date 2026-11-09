@@ -1,0 +1,47 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "🏗️ Varillas para columnas",
+      "weight": "Bolder",
+      "size": "Medium",
+      "wrap": true
+    },
+    {
+      "type": "Container",
+      "$data": "${varillas}",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "${numero} · ${nombre} → ${area} cm²",
+          "wrap": true,
+          "spacing": "None"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Cuantía: mín ${cuantia.min} % · congestión ${cuantia.congestion} % · máx ${cuantia.max} %",
+      "wrap": true,
+      "isSubtle": true,
+      "spacing": "Medium"
+    },
+    {
+      "type": "TextBlock",
+      "text": "Actualizado: ${actualizado}",
+      "size": "Small",
+      "isSubtle": true,
+      "spacing": "Medium"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Execute",
+      "title": "Abrir calculadora",
+      "verb": "abrir"
+    }
+  ]
+}

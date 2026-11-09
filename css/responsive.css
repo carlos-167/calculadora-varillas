@@ -1,0 +1,116 @@
+/* =============================================================
+   Calculadora de Varillas — css/responsive.css
+   -------------------------------------------------------------
+   Responsive, movimiento reducido e impresión. Se carga al final para poder sobrescribir.
+   ============================================================= */
+
+/* ---------- Responsive y accesibilidad ---------- */
+
+/* Teléfonos pequeños: el aro "Auto" pasa a su propia fila */
+@media (max-width: 400px) {
+  .diam-bar { grid-template-columns: repeat(6, minmax(0, 1fr)); padding: 10px; }
+  .diam-opt--auto { grid-column: 1 / -1; margin-top: 4px; }
+  .ring { width: 100%; height: 48px; margin: 0; border-radius: var(--r-pill); }
+  .knob { font-size: 11.5px; }
+  .field { flex-wrap: wrap; padding: 10px 0; }
+  .num-pill input { width: 54px; }
+  .empty { flex-direction: column; text-align: center; }
+}
+
+@media (max-width: 879px) {
+  /* En pantallas angostas la bruma clara es más pequeña para no restar contraste al texto */
+  .ambient {
+    background:
+      radial-gradient(400px 340px at -14% -10%, rgba(205, 214, 228, .34), rgba(128, 140, 160, .14) 40%, transparent 70%),
+      radial-gradient(700px 600px at 105% 110%, rgba(34, 39, 49, .95), transparent 70%),
+      linear-gradient(158deg, #343a45 0%, #181b22 34%, #0e1014 64%, #08090b 100%);
+  }
+  .blob--haze { width: 220px; height: 220px; left: -120px; top: -90px; background: rgba(214, 222, 236, .22); }
+}
+
+@media (max-width: 560px) {
+  .brand__title { font-size: 18px; }
+  .summary {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "dot body" "dot badge";
+    column-gap: 14px;
+    row-gap: 8px;
+    border-radius: 30px;
+    padding: 14px 16px 14px 14px;
+  }
+  .summary__dot { grid-area: dot; align-self: center; }
+  .summary__body { grid-area: body; }
+  .summary > .badge { grid-area: badge; justify-self: start; }
+  .summary__stats { gap: 2px 16px; }
+  .device { padding: 22px 16px 20px; border-radius: 36px; }
+  .results__head h2 { font-size: 34px; }
+  .kv__label { font-size: 13px; }
+  .summary__dot { width: 60px; height: 60px; font-size: 24px; }
+  .summary__title { font-size: 17px; }
+  .history { padding: 20px 16px; border-radius: 28px; }
+}
+
+/* Tablet y escritorio: dos columnas */
+@media (min-width: 880px) {
+  :root { --gutter: 36px; }
+  .app { padding-left: 32px; padding-right: 32px; padding-top: max(28px, env(safe-area-inset-top)); }
+  .layout { grid-template-columns: 400px minmax(0, 1fr); }
+  .topbar { padding-bottom: 32px; }
+}
+
+/* Panel fijo al desplazarse solo si cabe completo en la pantalla */
+@media (min-width: 880px) and (min-height: 900px) {
+  .device { position: sticky; top: 24px; }
+}
+
+/* Escritorio amplio: líneas de anotación entre panel y resultados (como en la referencia) */
+@media (min-width: 1120px) {
+  :root { --gutter: 72px; }
+  .app { padding-left: 44px; padding-right: 44px; }
+  .layout { grid-template-columns: 440px minmax(0, 1fr); }
+  .device { padding: 30px 26px 28px; }
+
+  .annot { position: relative; }
+  .annot::before,
+  .annot::after {
+    content: "";
+    position: absolute;
+    top: 38px;
+    pointer-events: none;
+  }
+  .annot::before {
+    right: calc(100% + 22px);
+    width: calc(var(--gutter) - 22px);
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .32));
+  }
+  .annot::after {
+    right: calc(100% + 16px);
+    width: 6px;
+    height: 6px;
+    margin-top: -2.5px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .6);
+    box-shadow: 0 0 8px rgba(255, 255, 255, .5);
+  }
+  .results__head.annot::before, .results__head.annot::after { top: 30px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Impresión: fondo blanco y solo lo esencial */
+@media print {
+  .ambient, .device, .history, .foot, .toast, .notice, .titlebar { display: none !important; }
+  body { background: #fff; color: #000; padding-top: 0 !important; }
+  .layout { display: block; }
+  .pill-dark, .warning { background: #fff; border-color: #ccc; color: #000; box-shadow: none; backdrop-filter: none; }
+  .muted, .results__sub { color: #333; }
+}

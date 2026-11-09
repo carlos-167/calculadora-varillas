@@ -1,0 +1,39 @@
+{
+  "varillas": [
+    {
+      "numero": "#3",
+      "nombre": "3/8\"",
+      "area": "0.71"
+    },
+    {
+      "numero": "#4",
+      "nombre": "1/2\"",
+      "area": "1.27"
+    },
+    {
+      "numero": "#5",
+      "nombre": "5/8\"",
+      "area": "1.98"
+    },
+    {
+      "numero": "#6",
+      "nombre": "3/4\"",
+      "area": "2.85"
+    },
+    {
+      "numero": "#8",
+      "nombre": "1\"",
+      "area": "5.07"
+    },
+    {
+      "numero": "#10",
+      "nombre": "1 1/4\"",
+      "area": "7.92"
+    }
+  ],
+  "cuantia": {
+    "min": "1",
+    "congestion": "4",
+    "max": "8"
+  }
+}

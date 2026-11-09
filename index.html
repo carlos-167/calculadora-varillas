@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Calculadora de Varillas · Columnas</title>
+  <meta name="description" content="Calcula de forma preliminar el número y diámetro de varillas para columnas de concreto reforzado. Funciona sin conexión.">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f1116">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Varillas">
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+
+  <!-- Estilos (el orden importa: responsive.css va al final) -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/barra-titulo.css">
+  <link rel="stylesheet" href="css/formulario.css">
+  <link rel="stylesheet" href="css/resultados.css">
+  <link rel="stylesheet" href="css/historial.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <!-- ============ BARRA DE TÍTULO (Window Controls Overlay) ============
+       Solo visible en la app instalada de escritorio. Se puede arrastrar
+       para mover la ventana; los 5 botones son accesos rápidos. -->
+  <header class="titlebar" id="titleBar">
+    <div class="titlebar__brand">
+      <img src="assets/logo.svg" width="18" height="18" alt="">
+      <span class="titlebar__name">Calculadora de Varillas</span>
+    </div>
+    <nav class="titlebar__controls" aria-label="Accesos rápidos">
+      <button type="button" class="tb-btn tb-btn--primary" data-accion="calcular" title="Calcular">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 7h7M8.5 11h1m2.5 0h1m2.5 0h0M8.5 14.5h1m2.5 0h1m2.5 0h0M8.5 18h1m2.5 0h1m2.5 0h0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span class="tb-btn__label">Calcular</span>
+      </button>
+      <button type="button" class="tb-btn" data-accion="limpiar" title="Limpiar">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="tb-btn__label">Limpiar</span>
+      </button>
+      <button type="button" class="tb-btn" data-accion="copiar" title="Copiar resultado">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 9V6.5A2.5 2.5 0 0 0 12.5 4h-6A2.5 2.5 0 0 0 4 6.5v6A2.5 2.5 0 0 0 6.5 15H9" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+        <span class="tb-btn__label">Copiar</span>
+      </button>
+      <button type="button" class="tb-btn" data-accion="historial" title="Ver cálculos recientes">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="tb-btn__label">Historial</span>
+      </button>
+      <button type="button" class="tb-btn" data-accion="imprimir" title="Imprimir resultado">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 9V4h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v6H7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <span class="tb-btn__label">Imprimir</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Fondo: bruma clara arriba a la izquierda y sombras difusas (decorativo) -->
+  <div class="ambient" aria-hidden="true">
+    <span class="blob blob--haze"></span>
+    <span class="blob blob--shadow"></span>
+    <span class="blob blob--cyan"></span>
+  </div>
+
+  <div class="app">
+    <!-- ============ ENCABEZADO ============ -->
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand__icon" src="assets/logo.svg" width="48" height="48" alt="">
+        <div>
+          <h1 class="brand__title">Calculadora de Varillas</h1>
+          <p class="brand__sub">Columnas de concreto reforzado</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Aviso cuando la app se abre como archivo (sin servidor) -->
+    <div class="notice" id="protoNotice" hidden>
+      <span class="notice__dot"></span>
+      <p id="protoNoticeText"></p>
+    </div>
+
+    <main class="layout" id="layout">
+      <!-- ============ PANEL DE ENTRADA (vidrio) ============ -->
+      <section class="device" aria-labelledby="inputTitle">
+        <div class="device__head">
+          <div class="device__title">
+            <span class="avatar" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18"><rect x="4" y="4" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8" cy="8" r="1.6" fill="currentColor"/><circle cx="16" cy="8" r="1.6" fill="currentColor"/><circle cx="16" cy="16" r="1.6" fill="currentColor"/><circle cx="8" cy="16" r="1.6" fill="currentColor"/></svg>
+            </span>
+            <h2 id="inputTitle">Datos de entrada</h2>
+          </div>
+          <button type="button" class="icon-btn" id="menuBtn" aria-controls="advBody" aria-expanded="false" title="Opciones avanzadas">
+            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <span class="sr-only">Opciones avanzadas</span>
+          </button>
+        </div>
+
+        <form id="calcForm" class="form" novalidate autocomplete="off">
+          <!-- Dimensiones -->
+          <div class="card-light fields">
+            <div class="field">
+              <label class="field__label" for="ancho">Ancho <small>horizontal</small></label>
+              <div class="stepper">
+                <button type="button" class="step" data-target="ancho" data-step="-5" aria-label="Restar 5 cm al ancho">−</button>
+                <div class="num-pill">
+                  <input id="ancho" name="ancho" type="number" inputmode="decimal" min="10" max="500" step="0.5" placeholder="30" aria-describedby="dimError">
+                  <span class="num-pill__unit">cm</span>
+                </div>
+                <button type="button" class="step" data-target="ancho" data-step="5" aria-label="Sumar 5 cm al ancho">+</button>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="field">
+              <label class="field__label" for="largo">Largo <small>vertical</small></label>
+              <div class="stepper">
+                <button type="button" class="step" data-target="largo" data-step="-5" aria-label="Restar 5 cm al largo">−</button>
+                <div class="num-pill">
+                  <input id="largo" name="largo" type="number" inputmode="decimal" min="10" max="500" step="0.5" placeholder="30" aria-describedby="dimError">
+                  <span class="num-pill__unit">cm</span>
+                </div>
+                <button type="button" class="step" data-target="largo" data-step="5" aria-label="Sumar 5 cm al largo">+</button>
+              </div>
+            </div>
+            <p class="field-error" id="dimError" aria-live="polite"></p>
+          </div>
+
+          <!-- Porcentaje de acero (sobre el vidrio, como el slider de la referencia) -->
+          <div class="block">
+            <div class="block__head">
+              <label for="pctRange" class="block__label">Porcentaje de acero</label>
+              <div class="pct-pill">
+                <input id="pct" name="pct" type="number" inputmode="decimal" min="0.1" max="10" step="0.1" value="1" aria-label="Porcentaje de acero en por ciento" aria-describedby="pctError">
+                <span>%</span>
+              </div>
+            </div>
+            <input type="range" class="range" id="pctRange" min="0.5" max="8" step="0.1" value="1" aria-label="Porcentaje de acero">
+            <div class="range-scale" aria-hidden="true">
+              <span style="--p:0.0667">1</span>
+              <span style="--p:0.2">2</span>
+              <span style="--p:0.4667">4</span>
+              <span style="--p:0.7333">6</span>
+              <span style="--p:1">8 %</span>
+            </div>
+            <p class="field-error field-error--dark" id="pctError" aria-live="polite"></p>
+          </div>
+
+          <!-- Diámetro de varilla: barra oscura con botones circulares + aro cian "Auto" -->
+          <div class="block">
+            <div class="block__head">
+              <span class="block__label" id="diamLabel">Diámetro de varilla</span>
+              <span class="caption" id="diamCaption">Recomendar automáticamente</span>
+            </div>
+            <div class="diam-bar" role="radiogroup" aria-labelledby="diamLabel">
+              <label class="diam-opt" title='3/8" (#3)'><input type="radio" name="diam" value="3/8"><span class="knob">3/8</span></label>
+              <label class="diam-opt" title='1/2" (#4)'><input type="radio" name="diam" value="1/2"><span class="knob">1/2</span></label>
+              <label class="diam-opt" title='5/8" (#5)'><input type="radio" name="diam" value="5/8"><span class="knob">5/8</span></label>
+              <label class="diam-opt" title='3/4" (#6)'><input type="radio" name="diam" value="3/4"><span class="knob">3/4</span></label>
+              <label class="diam-opt" title='1" (#8)'><input type="radio" name="diam" value="1"><span class="knob">1</span></label>
+              <label class="diam-opt" title='1 1/4" (#10)'><input type="radio" name="diam" value="1-1/4"><span class="knob">1¼</span></label>
+              <label class="diam-opt diam-opt--auto" title="Recomendar automáticamente">
+                <input type="radio" name="diam" value="auto" checked>
+                <span class="ring"><span class="ring__label">Auto</span></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Ajustes constructivos -->
+          <div class="card-light toggles">
+            <label class="toggle">
+              <span class="toggle__text"><strong>Mínimo 4 varillas</strong><small>Una en cada esquina</small></span>
+              <span class="switch"><input type="checkbox" id="min4" checked><i></i></span>
+            </label>
+            <div class="divider"></div>
+            <label class="toggle">
+              <span class="toggle__text"><strong>Número par</strong><small>Distribución simétrica</small></span>
+              <span class="switch"><input type="checkbox" id="par"><i></i></span>
+            </label>
+          </div>
+
+          <!-- Opciones avanzadas (tarjeta desplegable) -->
+          <div class="card-light dropdown" id="advCard">
+            <button type="button" class="dropdown__head" id="advToggle" aria-controls="advBody" aria-expanded="false">
+              <span>Opciones avanzadas</span>
+              <svg class="chev" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="dropdown__body" id="advBody" hidden>
+              <div class="field field--compact">
+                <label class="field__label" for="recub">Recubrimiento libre</label>
+                <div class="num-pill num-pill--sm">
+                  <input id="recub" name="recub" type="number" inputmode="decimal" min="1" max="10" step="0.5" value="4" aria-describedby="recubError">
+                  <span class="num-pill__unit">cm</span>
+                </div>
+              </div>
+              <div class="field field--compact">
+                <label class="field__label" for="estribo">Diámetro del estribo</label>
+                <div class="select-pill">
+                  <select id="estribo" name="estribo">
+                    <option value="1/4">1/4" (#2)</option>
+                    <option value="5/16">5/16" (#2.5)</option>
+                    <option value="3/8" selected>3/8" (#3)</option>
+                    <option value="1/2">1/2" (#4)</option>
+                  </select>
+                </div>
+              </div>
+              <p class="field-error" id="recubError" aria-live="polite"></p>
+              <p class="hint">Se usan para dibujar el esquema y revisar que las varillas quepan con una separación libre mínima de 1.5 veces el diámetro o 4 cm.</p>
+            </div>
+          </div>
+
+          <!-- Botones principales -->
+          <div class="actions">
+            <button type="button" class="btn btn--light" id="clearBtn">Limpiar</button>
+            <button type="submit" class="btn btn--primary" id="calcBtn">
+              <span class="btn__label">Calcular</span>
+              <span class="spinner" aria-hidden="true"></span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ============ RESULTADOS ============ -->
+      <section class="results" id="results" aria-labelledby="resTitle">
+        <header class="results__head annot">
+          <h2 id="resTitle">Resultados</h2>
+          <p class="results__sub" id="resSub" aria-live="polite">Ingresa las dimensiones y presiona <strong>Calcular</strong>.</p>
+        </header>
+
+        <!-- Estado vacío -->
+        <div class="pill-dark empty" id="emptyState">
+          <svg class="empty__art" viewBox="0 0 120 120" aria-hidden="true">
+            <rect x="18" y="18" width="84" height="84" rx="8" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="2" stroke-dasharray="5 6"/>
+            <rect x="28" y="28" width="64" height="64" rx="6" fill="none" stroke="rgba(75,232,255,.55)" stroke-width="2"/>
+            <g fill="rgba(91,140,255,.55)">
+              <circle cx="35" cy="35" r="4.5"/><circle cx="60" cy="35" r="4.5"/><circle cx="85" cy="35" r="4.5"/>
+              <circle cx="85" cy="60" r="4.5"/><circle cx="85" cy="85" r="4.5"/><circle cx="60" cy="85" r="4.5"/>
+              <circle cx="35" cy="85" r="4.5"/><circle cx="35" cy="60" r="4.5"/>
+            </g>
+          </svg>
+          <div>
+            <p class="empty__title">Aún no hay resultados</p>
+            <p class="empty__text">Escribe el ancho y el largo de la columna, ajusta el porcentaje de acero y elige un diámetro, o deja <strong>Auto</strong> para que la app recomiende la mejor opción.</p>
+          </div>
+        </div>
+
+        <div class="result-wrap" id="resultWrap" hidden>
+          <!-- Resumen principal -->
+          <div class="pill-dark summary annot">
+            <div class="summary__dot"><span id="sumCount">0</span></div>
+            <div class="summary__body">
+              <p class="summary__title" id="sumTitle">—</p>
+              <div class="summary__stats">
+                <span><b id="sumAsReq">—</b><small>As req. cm²</small></span>
+                <span><b id="sumAsProv">—</b><small>As prop. cm²</small></span>
+                <span><b id="sumPct">—</b><small>% real</small></span>
+              </div>
+            </div>
+            <span class="badge" id="sumBadge">—</span>
+          </div>
+
+          <div class="res-grid">
+            <!-- Tarjeta clara tipo "modal" con los resultados -->
+            <article class="card-light sheet annot">
+              <header class="sheet__head">
+                <span class="avatar avatar--light" aria-hidden="true">🧱</span>
+                <h3>Resultado del cálculo</h3>
+                <button type="button" class="icon-btn icon-btn--ink" id="shareBtn" title="Compartir con otras aplicaciones">
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 15V3.5m0 0L7.5 8M12 3.5 16.5 8M8 11H6.5A2.5 2.5 0 0 0 4 13.5v5A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5v-5a2.5 2.5 0 0 0-2.5-2.5H16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="sr-only">Compartir resultado</span>
+                </button>
+                <button type="button" class="icon-btn icon-btn--ink" id="copyBtn" title="Copiar resultado">
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 9V6.5A2.5 2.5 0 0 0 12.5 4h-6A2.5 2.5 0 0 0 4 6.5v6A2.5 2.5 0 0 0 6.5 15H9" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+                  <span class="sr-only">Copiar resultado</span>
+                </button>
+              </header>
+              <ul class="kv">
+                <li><span class="kv__ic" aria-hidden="true">📐</span><span class="kv__label">Dimensiones de la columna</span><span class="kv__val" id="rDim">—</span></li>
+                <li><span class="kv__ic" aria-hidden="true">📏</span><span class="kv__label">Área de la sección</span><span class="kv__val" id="rArea">—</span></li>
+                <li><span class="kv__ic" aria-hidden="true">📊</span><span class="kv__label">Porcentaje de acero solicitado</span><span class="kv__val" id="rPct">—</span></li>
+                <li><span class="kv__ic" aria-hidden="true">🔩</span><span class="kv__label">Área de acero requerida</span><span class="kv__val" id="rAsReq">—</span></li>
+                <li><span class="kv__ic" aria-hidden="true">🔩</span><span class="kv__label">Número de varillas</span><span class="kv__val" id="rN">—</span></li>
+                <li><span class="kv__ic" aria-hidden="true">📌</span><span class="kv__label">Diámetro seleccionado</span><span class="kv__val" id="rDiam">—</span></li>
+                <li><span class="kv__ic" aria-hidden="true">📊</span><span class="kv__label">Área de acero proporcionada</span><span class="kv__val" id="rAsProv">—</span></li>
+                <li><span class="kv__ic" aria-hidden="true">📈</span><span class="kv__label">Porcentaje real de acero</span><span class="kv__val" id="rPctReal">—</span></li>
+              </ul>
+            </article>
+
+            <!-- Esquema de la sección -->
+            <article class="pill-dark section-card">
+              <header class="card-head">
+                <h3>Esquema de la sección</h3>
+                <span class="muted" id="secMode">—</span>
+              </header>
+              <div class="section-svg" id="sectionSvg"></div>
+              <div class="legend" id="secLegend"></div>
+              <p class="muted small" id="secMeta">—</p>
+            </article>
+          </div>
+
+          <!-- Alternativas -->
+          <article class="pill-dark alt-card annot">
+            <header class="card-head">
+              <h3>Alternativas por diámetro</h3>
+              <span class="muted">Toca una fila para ver su esquema</span>
+            </header>
+            <div class="table-scroll">
+              <table class="alt-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Diámetro</th>
+                    <th scope="col" class="num">No. de varillas</th>
+                    <th scope="col" class="num">Área proporcionada</th>
+                    <th scope="col" class="num nowrap">% real</th>
+                    <th scope="col">Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="altBody"></tbody>
+              </table>
+            </div>
+            <p class="muted small">
+              <strong>Criterio de recomendación:</strong> entre las opciones con al menos 4 varillas que caben con la separación libre mínima,
+              se elige la de menor área de acero proporcionada (menor excedente); si empatan, la de menos varillas.
+            </p>
+          </article>
+
+          <!-- Notas y observaciones -->
+          <div class="notes" id="notes"></div>
+        </div>
+
+        <!-- Aviso de seguridad estructural (siempre visible) -->
+        <aside class="warning annot" role="note" aria-label="Aviso de seguridad estructural">
+          <span class="warning__ic" aria-hidden="true">⚠️</span>
+          <div>
+            <p class="warning__title">Aviso de seguridad estructural</p>
+            <p class="warning__text" id="avisoTexto">Esta herramienta proporciona cálculos preliminares. El armado definitivo de una columna debe ser determinado y revisado por un profesional responsable, considerando las cargas, materiales, condiciones de apoyo, confinamiento, normas y demás requisitos estructurales aplicables.</p>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <!-- ============ HISTORIAL ============ -->
+    <section class="history" aria-labelledby="histTitle">
+      <header class="history__head">
+        <div>
+          <h2 id="histTitle">Cálculos recientes</h2>
+          <p class="muted">Se guardan solo en este dispositivo. Toca uno para volver a cargarlo.</p>
+        </div>
+        <button type="button" class="btn-ghost btn-ghost--danger" id="clearHist" hidden>Eliminar historial</button>
+      </header>
+      <ul class="history__list" id="histList"></ul>
+      <p class="history__empty" id="histEmpty">Todavía no hay cálculos guardados.</p>
+    </section>
+
+    <footer class="foot">
+      <p>Calculadora de Varillas · v<span id="appVersion">1.0.0</span> · Resultados preliminares · <a href="politica-privacidad.html" style="color:inherit">Política de privacidad</a></p>
+    </footer>
+  </div>
+
+  <!-- Notificación flotante -->
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+    <span class="toast__dot"></span>
+    <span id="toastMsg"></span>
+    <button type="button" class="toast__action" id="toastAction" hidden></button>
+  </div>
+
+  <!-- Scripts (scripts clásicos en orden: comparten constantes y funciones;
+       así la calculadora también funciona al abrir el archivo directamente) -->
+  <script src="js/config.js" defer></script>
+  <script src="js/utilidades.js" defer></script>
+  <script src="js/calculos.js" defer></script>
+  <script src="js/geometria.js" defer></script>
+  <script src="js/esquema-svg.js" defer></script>
+  <script src="js/interfaz.js" defer></script>
+  <script src="js/historial.js" defer></script>
+  <script src="js/compartir.js" defer></script>
+  <script src="js/pwa.js" defer></script>
+  <script src="js/barra-titulo.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>

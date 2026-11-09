@@ -1,0 +1,67 @@
+/* =============================================================
+   Calculadora de Varillas — css/variables.css
+   -------------------------------------------------------------
+   Variables: colores, radios, sombras y tipografía (estilo "Neo-Tactile").
+   ============================================================= */
+
+/* ---------- Variables ---------- */
+:root {
+  color-scheme: dark;
+
+  /* Fondo */
+  --bg-0: #090a0d;
+  --bg-1: #12151b;
+
+  /* Texto sobre fondo oscuro */
+  --text: #f2f4f8;
+  --text-2: #a9b0bc;
+  --text-3: #737b89;
+
+  /* Superficies claras (tarjetas en relieve) */
+  --surface-hi: #f4f6f9;
+  --surface: #e9ecf1;
+  --surface-lo: #dde1e8;
+  --ink: #16191f;
+  --ink-2: #4b5260;
+  --ink-3: #8a919e;
+
+  /* Acentos */
+  --blue: #3b6cf6;
+  --blue-hi: #5d8dff;
+  --blue-lo: #2753e3;
+  --cyan: #4be8ff;
+  --cyan-2: #25c6e6;
+  --ok: #45dd9b;
+  --warn: #ffc25c;
+  --bad: #ff6f6f;
+
+  /* Píldoras oscuras */
+  --pill-bg: linear-gradient(180deg, rgba(50, 55, 66, .74), rgba(28, 32, 39, .74));
+  --pill-border: rgba(255, 255, 255, .12);
+
+  /* Radios */
+  --r-xl: 44px;
+  --r-lg: 26px;
+  --r-md: 20px;
+  --r-pill: 999px;
+
+  /* Sombras */
+  --shadow-light:
+    inset 0 1px 0 rgba(255, 255, 255, .95),
+    inset 0 -1px 0 rgba(0, 0, 0, .05),
+    0 30px 42px -24px rgba(0, 0, 0, .8),
+    0 8px 14px -8px rgba(0, 0, 0, .4);
+  --shadow-dark:
+    inset 0 1px 0 rgba(255, 255, 255, .07),
+    0 26px 44px -26px rgba(0, 0, 0, .9);
+
+  /* Tipografía (fuentes del sistema: funcionan sin conexión) */
+  --font: "Segoe UI Variable Display", "Segoe UI Variable Text", "SF Pro Display", -apple-system,
+          BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Separación entre panel y resultados (se usa en las líneas de anotación) */
+  --gutter: 28px;
+
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --ease-spring: cubic-bezier(.3, 1.4, .5, 1);
+}

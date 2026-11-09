@@ -1,0 +1,111 @@
+{
+  "id": "./",
+  "name": "Calculadora de Varillas para Columnas",
+  "short_name": "Varillas",
+  "description": "Cálculo preliminar del número y diámetro de varillas para columnas de concreto reforzado. Funciona sin conexión.",
+  "lang": "es-MX",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
+  ],
+  "orientation": "any",
+  "background_color": "#0f1116",
+  "theme_color": "#0f1116",
+  "categories": [
+    "utilities",
+    "productivity",
+    "education"
+  ],
+  "share_target": {
+    "action": "./recibir-compartido",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "archivo",
+          "accept": [
+            "text/plain",
+            ".txt",
+            "text/csv",
+            ".csv",
+            "application/json",
+            ".json"
+          ]
+        }
+      ]
+    }
+  },
+  "widgets": [
+    {
+      "name": "Catálogo de varillas",
+      "short_name": "Catálogo",
+      "description": "Diámetros de varilla (pulgadas y número) con su área en cm² y las cuantías de referencia.",
+      "tag": "varillas-catalogo",
+      "template": "varillas-catalogo-plantilla",
+      "ms_ac_template": "./widgets/plantilla.json",
+      "data": "./widgets/datos.json",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "./widgets/captura.png",
+          "sizes": "600x400",
+          "type": "image/png",
+          "label": "Catálogo de varillas"
+        }
+      ],
+      "icons": [
+        {
+          "src": "assets/icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ],
+      "auth": false,
+      "update": 86400
+    }
+  ],
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/capturas/escritorio.webp",
+      "sizes": "1280x720",
+      "type": "image/webp",
+      "form_factor": "wide",
+      "label": "Resultados del cálculo y esquema de la sección"
+    },
+    {
+      "src": "assets/capturas/movil.webp",
+      "sizes": "540x960",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Calculadora en pantalla angosta"
+    }
+  ]
+}
